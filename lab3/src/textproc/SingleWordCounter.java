@@ -1,4 +1,4 @@
-package textproc;
+
 
 public class SingleWordCounter implements TextProcessor {
 	private String word;

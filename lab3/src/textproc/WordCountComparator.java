@@ -1,28 +1,28 @@
-package textproc;
 
-import java.util.Comparator;
-import java.util.Map;
+import java.util.*;
+import java.util.Map.Entry;
 
-public class WordCountComparator implements Comparator<Map.Entry<String, Integer>>{
-    public WordCountComparator(){
+public class WordCountComparator implements Comparator<Map.Entry<String, Integer>> {
 
-    }
+	@Override
+	public int compare(Entry<String, Integer> o1, Entry<String, Integer> o2) {
+		if(o2.getValue() > o1.getValue()){
+		return 1;}
+		else if((o2.getValue() < o1.getValue())){
+		return -1;
+		}
+		else if(o1.getValue().equals(o2.getValue())){
+			if(o1.getKey().compareTo(o2.getKey())< 0){
+				return -1;
+			}
+			else { return 1;}
+		
+			
+		}
+		else{
+			return 0;
+		}
+	}
+	
 
-    @Override
-    public int compare(Map.Entry<String, Integer> o1, Map.Entry<String, Integer> o2) {
-        if(o1.getValue() > o2.getValue()){
-            return -1;
-        }
-        else if(o1.getValue().equals(o2.getValue())){
-            if(o1.getKey().compareTo(o2.getKey()) > 0){
-                return 1;
-            }else if(o1.getKey().compareTo(o2.getKey()) < 0){
-                return -1;
-            } else return 0;
-        }
-        else if(o1.getValue() < o2.getValue()){
-            return 1;
-        }
-        else return 0;
-    }
 }
