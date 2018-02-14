@@ -8,12 +8,12 @@ import java.util.HashMap;
 
 public class Mountain extends Fractal{
     private int length;
-    HashMap<Side, Point> sideMap;
-
+    private HashMap<Side, Point> hmap = new HashMap();
     public Mountain(int length) {
         super();
         this.length = length;
-        sideMap = new HashMap<>();
+       
+    
     }
 
     @Override
@@ -24,67 +24,28 @@ public class Mountain extends Fractal{
     @Override
     public void draw(TurtleGraphics turtle) {
         int length = 300;
+        int dev = 20;
 
         int startX = (int) Math.round(turtle.getWidth() / 2.0 - length / 2.0);
         int startY = (int) Math.round(turtle.getHeight() / 2.0 + Math.sqrt(3.0) * length / 4.0);
 
-        Point pointA = new Point(startX, startY);
-        Point pointC = new Point(startX+length, startY+100);
-        Point pointB = new Point(startX+length/2, startY-length/2);
+        Point pointA = new Point(20, 20);
+        Point pointC = new Point(60, 500);
+        Point pointB = new Point(500, 250);
 
         //TODO:
-        mountainTriangle(turtle, order, pointA, pointB, pointC);
-        /**
-        fractalLine(turtle, order,length,0);
-        fractalLine(turtle, order,length,120);
-        fractalLine(turtle, order,length,240);
-         */
+        mountainTriangle(turtle, order, pointA, pointB, pointC, dev);
     }
 
-    private Point getExistingPoint{
-
-    }
-
-    private void mountainTriangle(TurtleGraphics turtle, int order, Point pointA, Point pointB, Point pointC){
+    private void mountainTriangle(TurtleGraphics turtle, int order, Point pointA, Point pointB, Point pointC, int dev){
         Point pointD;
         Point pointE;
         Point pointF;
 
-        ArrayList<Side> sidesToSearch = new HashMap<>();
-
-        sidesToSearch.add(new Side(pointA, pointB));
-        sidesToSearch.add(new Side(pointC, pointB));
-        sidesToSearch.add(new Side(pointA, pointC));
-
-        pointD = pointA.middlePoint(pointB, true);
-        pointE = pointC.middlePoint(pointB, true);
-        pointF = pointA.middlePoint(pointC, true);
-
-        if(sideMap.containsKey(pointD.hashCode())){
-            //hämta värde
-            pointD = sideMap.get(pointD);
-            //ta bort
-        }else{
-
-        }
-        if(sideMap.containsKey(pointE.hashCode())){
-            //hämta värde
-            pointE = sideMap.get(pointE);
-            //ta bort
-        }else{
-
-        }
-        if(sideMap.containsKey(pointF.hashCode())){
-            //hämta värde
-            pointF = sideMap.get(pointF);
-            //ta bort
-        }else{
-
-        }
-
-
-
-
+        pointD = middlepoint(pointA,pointB,dev);
+        pointE = middlepoint(pointB,pointC,dev);
+        pointF = middlepoint(pointC,pointA,dev);
+        
         //basfallet
         if(order == 0){
             //Rita ut skiten
@@ -97,15 +58,37 @@ public class Mountain extends Fractal{
 
         }else{
             //topp
-            mountainTriangle(turtle, order-1, pointD, pointB, pointE);
+            mountainTriangle(turtle, order-1, pointD, pointB, pointE, dev/2);
             //vänster
-            mountainTriangle(turtle, order-1, pointA, pointD, pointF);
+            mountainTriangle(turtle, order-1, pointA, pointD, pointF, dev/2);
             //höger
-            mountainTriangle(turtle, order-1, pointE, pointC, pointF);
+            mountainTriangle(turtle, order-1, pointE, pointC, pointF, dev/2);
             //mitt - obs annorlunda skruvad
-            mountainTriangle(turtle, order-1, pointD, pointE, pointF);
+            mountainTriangle(turtle, order-1, pointD, pointE, pointF, dev/2);
 
         }
+        
+        
+        
 
     }
+    
+    private Point middlepoint(Point p, Point ps, double dev) {
+		Side temp = new Side(p, ps);
+		Point mp;
+		if (hmap.containsKey(temp)) {
+			mp = hmap.remove(temp);
+			return mp;
+		} 
+		else {
+			int x = (p.getX() + ps.getX()) / 2;
+			int y = (p.getY() + ps.getY()) / 2;
+			mp = new Point(x + (int) Math.round(RandomUtilities.randFunc(dev)),
+			y + (int) Math.round(RandomUtilities.randFunc(dev)));
+			hmap.put(temp, mp);
+			return mp;
+		}
+
+	}
 }
+
