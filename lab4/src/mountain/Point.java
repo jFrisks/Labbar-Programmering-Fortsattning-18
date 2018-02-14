@@ -27,23 +27,7 @@ public class Point {
 
 	/**
 	 * */
-	public Point middlePoint(Point otherPoint, boolean isWarped){
-        Point newPoint;
-        //TODO: If deltay = 0 => ändra.
-        int x= (int) Math.round(this.x + (otherPoint.x - this.x) / 2.0);
-        double deltaY = (this.y - otherPoint.y) / 2.0;
-        int y = (int) Math.round(this.y - deltaY);
-
-        if (isWarped){
-            double dev = 0.25;
-            int warpedY = y+(int)Math.round(deltaY*(RandomUtilities.randFunc(dev)));
-		    newPoint = new Point(x,warpedY);
-        }
-        else {
-            newPoint = new Point(x,y);
-        }
-		return newPoint;
-	}
+	
 	
 	@Override
 	public boolean equals(Object obj) {
