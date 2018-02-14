@@ -30,7 +30,5 @@ public class Side {
 	}
     
     
-    public Point getMPoint(){
-		return m;
-	}
+ 
 }
