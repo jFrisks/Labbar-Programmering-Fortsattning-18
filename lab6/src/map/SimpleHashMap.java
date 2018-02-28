@@ -30,12 +30,10 @@ public class SimpleHashMap<K, V> implements Map<K, V>{
 
         Entry<K, V> entry = find(keyK);
         if(entry != null) {
-            entry.getValue();
+            return entry.getValue();
         }else {
             return null;
         }
-
-        return null;
     }
 
     @Override
@@ -60,24 +58,68 @@ public class SimpleHashMap<K, V> implements Map<K, V>{
             if(entries[index] == null) {
                 entries[index] = newEntry;  //lägga in
                 tableSize++;
-            }else {
-                //lägg in ny entry i sista entry (entry.next == null)
-                Entry<K, V> oldFirstEntry = entries[index];
-                entries[index] = newEntry;
-                entries[index].next = oldFirstEntry;
+                size++;
+            }else if(entries[index].equals(value)){
+                return null;
+            } else {
+                //lägg in ny entry i if no entry is same as sista entry (entry.next == null)
+                if(find(key) != null){
+                    Entry<K, V> oldFirstEntry = entries[index];
+                    entries[index] = newEntry;
+                    entries[index].next = oldFirstEntry;
+                    size++;
+                }else{
+                    return null;
+                }
             }
         }
+        System.out.println(show());
         return value;
     }
 
     @Override
     public V remove(Object key) {
+        K keyK = (K) key;
+
+        //FALL1: lista null
+        //FALL2: key i första element
+        //FALL3: key senare i listan
+        //fall4: key finns ej
+
+
+        int index = index(keyK);
+
+        if(entries == null){
+            return null;
+        }else if(entries[index].key.equals(keyK)){      //if first in linkedlist
+            entries[index] = entries[index].next;
+            size--;
+            if(entries[index].next == null){            //if no elements left in vectorspace
+                tableSize--;
+            }
+        }else{
+            //loopa igenom
+            Entry<K, V> old = null;
+            Entry<K, V> current = entries[index];
+            while(current != null) {
+                if(current.key.equals(keyK)) {
+                    //ta bort
+                    old.next = current.next;
+                    size--;
+                }
+                old = current;
+                current = current.next;
+            }
+            return old.value;
+        }
+
         //find key
             //if found
                 //relink and remove
                 //return value from deleted
             //if not
                 //return null
+
         return null;
     }
 
@@ -125,7 +167,7 @@ public class SimpleHashMap<K, V> implements Map<K, V>{
         return null;
     }
 
-    private int index(Object key) {
+    private int index(K key) {
         int index;
 
         //fixa hashcoden returnera var den borde ha för index
