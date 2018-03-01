@@ -48,7 +48,7 @@ public class SimpleHashMap<K, V> implements Map<K, V>{
     @Override
     public V put(K key, V value) {
         //kolla om den överstiger loadfactor -> rehash
-        if(loadFactor <= tableSize/capacity){
+        if(false/*loadFactor <= tableSize/capacity*/){
             rehash();
         }else {
             Entry<K, V> newEntry = new Entry<K, V>(key, value);
@@ -63,7 +63,7 @@ public class SimpleHashMap<K, V> implements Map<K, V>{
                 return null;
             } else {
                 //lägg in ny entry i if no entry is same as sista entry (entry.next == null)
-                if(find(key) != null){
+                if(find(key) == null){
                     Entry<K, V> oldFirstEntry = entries[index];
                     entries[index] = newEntry;
                     entries[index].next = oldFirstEntry;
@@ -73,7 +73,6 @@ public class SimpleHashMap<K, V> implements Map<K, V>{
                 }
             }
         }
-        System.out.println(show());
         return value;
     }
 
@@ -89,14 +88,19 @@ public class SimpleHashMap<K, V> implements Map<K, V>{
 
         int index = index(keyK);
 
-        if(entries == null){
+        //Handle if map is empty
+        if(isEmpty()){
             return null;
         }else if(entries[index].key.equals(keyK)){      //if first in linkedlist
+            Entry<K, V> tmp = entries[index];
+
             entries[index] = entries[index].next;
             size--;
-            if(entries[index].next == null){            //if no elements left in vectorspace
+            if(tmp.next == null){            //if no elements left in vectorspace
                 tableSize--;
             }
+        }else if(find(keyK)==null){         //if key is not find - cant remove
+            return null;
         }else{
             //loopa igenom
             Entry<K, V> old = null;
@@ -157,7 +161,7 @@ public class SimpleHashMap<K, V> implements Map<K, V>{
         //basentryn
         Entry<K, V> currentEntry = entries[index];
 
-        while(entries[index] != null){
+        while(currentEntry != null){
             //cond for find key - no risk for nullpointer
             if(currentEntry.key.equals(key)){
                 return currentEntry;
@@ -175,16 +179,17 @@ public class SimpleHashMap<K, V> implements Map<K, V>{
         return index;
     }
 
+    @Override
     public String show(){
         StringBuilder sb = new StringBuilder();
 
-        for(int i = 0; i < entries.length; i++){
+        for(int i = 0; i < capacity; i++){
             Entry<K, V> currentEntry = entries[i];  //keeps track of current entry of all that collides
 
             //loopa igenom alla next
             sb.append(i + "         ");
-            while(entries[i] != null) {
-                sb.append(entries[i].key.toString() + "=" +  entries[i].value.toString() + " ");
+            while(currentEntry != null) {
+                sb.append(currentEntry.toString() + " ");
                 currentEntry = currentEntry.next;
             }
             sb.append("\n");
@@ -200,7 +205,7 @@ public class SimpleHashMap<K, V> implements Map<K, V>{
     public static class Entry<K, V> implements Map.Entry<K, V>{
         private K key;
         private V value;
-        private Entry<K, V> next;
+        public Entry<K, V> next;
 
         public Entry(K key, V value){
             this.key = key;
