@@ -46,7 +46,11 @@ public class SimpleHashMap<K, V> implements Map<K, V>{
     }
 
     @Override
-    public V put(K key, V value) {
+    public  V put(K key, V value) {
+        return put(key, value, entries);
+    }
+
+    public V put(K key, V value, Entry<K, V>[] localEntries) {
         //kolla om den överstiger loadfactor -> rehash
         if(false/*loadFactor <= tableSize/capacity*/){
             rehash();
@@ -55,18 +59,18 @@ public class SimpleHashMap<K, V> implements Map<K, V>{
 
             int index = index(key);
             //kolla om vektorplats tom eller ej
-            if(entries[index] == null) {
-                entries[index] = newEntry;  //lägga in
+            if(localEntries[index] == null) {
+                localEntries[index] = newEntry;  //lägga in
                 tableSize++;
                 size++;
-            }else if(entries[index].equals(value)){
+            }else if(localEntries[index].equals(value)){
                 return null;
             } else {
                 //lägg in ny entry i if no entry is same as sista entry (entry.next == null)
                 if(find(key) == null){
-                    Entry<K, V> oldFirstEntry = entries[index];
-                    entries[index] = newEntry;
-                    entries[index].next = oldFirstEntry;
+                    Entry<K, V> oldFirstEntry = localEntries[index];
+                    localEntries[index] = newEntry;
+                    localEntries[index].next = oldFirstEntry;
                     size++;
                 }else{
                     return null;
@@ -84,7 +88,6 @@ public class SimpleHashMap<K, V> implements Map<K, V>{
         //FALL2: key i första element
         //FALL3: key senare i listan
         //fall4: key finns ej
-
 
         int index = index(keyK);
 
@@ -128,18 +131,17 @@ public class SimpleHashMap<K, V> implements Map<K, V>{
         Entry<K, V>[] newTable = (Entry<K, V>[]) new Entry[capacity];
 
         //loopa igenom gamla tabellen
-        for(Entry entry: entries) {
+        for(Entry<K, V> entry: entries) {
 
             Entry<K, V> currentEntry = entry;
 
             //loop igenom alla länkade entries
             while(entry != null) {
-                int newIndex = entry.key.hashCode() % capacity;     //new index for entry in new table
-                newTable[newIndex] = currentEntry;
-
+                //put entry from old vector in new vector
+                put(entry.key, entry.value, newTable);
+                //scope to new entry thats linked
                 currentEntry = currentEntry.next;
             }
-
         }
 
         entries = newTable;
