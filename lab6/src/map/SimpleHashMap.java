@@ -88,43 +88,38 @@ public class SimpleHashMap<K, V> implements Map<K, V>{
 
         int index = index(keyK);
 
-        //Handle if map is empty
-        if(isEmpty()){
-            return null;
-        }else if(entries[index].key.equals(keyK)){      //if first in linkedlist
-            Entry<K, V> tmp = entries[index];
-
-            entries[index] = entries[index].next;
-            size--;
-            if(tmp.next == null){            //if no elements left in vectorspace
-                tableSize--;
-            }
-        }else if(find(keyK)==null){         //if key is not find - cant remove
+        //Handle if map is empty or place is null
+        if(isEmpty() || entries[index] == null){
             return null;
         }else{
-            //loopa igenom
-            Entry<K, V> old = null;
-            Entry<K, V> current = entries[index];
-            while(current != null) {
-                if(current.key.equals(keyK)) {
-                    //ta bort
-                    old.next = current.next;
-                    size--;
+        //if there's entries at table[index]
+            if(entries[index].key.equals(keyK)){      //if first in linkedlist
+                Entry<K, V> old = entries[index];
+
+                entries[index] = entries[index].next;
+                size--;
+                if(old.next == null){            //if no elements left in vectorspace
+                    tableSize--;
                 }
-                old = current;
-                current = current.next;
+                return old.value;
+            }else if(find(keyK)==null){         //if key is not find - cant remove
+                return null;
+            }else{
+                //loopa igenom
+                Entry<K, V> old = null;
+                Entry<K, V> current = entries[index];
+                while(current != null) {
+                    if(current.key.equals(keyK)) {
+                        //ta bort
+                        old.next = current.next;
+                        size--;
+                    }
+                    old = current;
+                    current = current.next;
+                }
+                return old.value;
             }
-            return old.value;
         }
-
-        //find key
-            //if found
-                //relink and remove
-                //return value from deleted
-            //if not
-                //return null
-
-        return null;
     }
 
     private void rehash() {
